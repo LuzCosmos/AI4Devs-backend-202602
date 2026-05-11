@@ -1,3 +1,5 @@
+# Prompts para enteder el contexto del proyecto
+
 1. lee este archivo para contexto de la aplicación: @backend/prisma/schema.prisma
 2. Identifica la causa del error en consola y solucionalo
    npx prisma generate
@@ -38,8 +40,10 @@ revisa la forma correcta en la que se debe ejecutar el archivo @backend/prisma/s
 
 4. Eres un experto en bases de datos. Dame una documentación del modelo de datos que explique campos, relaciones y un diagrama en formato mermaid @contextScopeItemMention escribe el resultado en un archivo .md en ./docs/database
 
+# Prompts primer Endpoint
+
 5. eres un Senior experto en Express + Prisma en backend.
-   Crea y enriquese la siguiente historia de usuario:
+   Crea y enriquee la siguiente historia de usuario:
    crear un nuevo endpoint en una interfaz tipo kanban.
    GET /positions/:id/candidates
    Este endpoint recogerá todos los candidatos en proceso para una determinada posición, es decir, todas las aplicaciones para un determinado positionID. Debe proporcionar la siguiente información básica:
@@ -61,7 +65,7 @@ Enriquece la historia de usuario y guardala en un archivo .md en ./backend/docs/
 Además, los casos de uso que hiciste son en realidad casos de secuencia, puedes dejarlo como casos de secuenci y aparte incluye una sección para casos de uso: haz un diagrama UML de casos de uso usando flowchart de Mermaid, NO sequenceDiagram.
 Además en el archivo de la historia de usuario pon checks para tener claro que se ha ejecutado y qué falta
 
-7. Enriquese la historia ./backend/docs/user_histories/US-get-position-candidates.md, la aplicación no cuenta con sistema de autenticación, por lo que esto no se debe tener en cuenta en la historia de usuario.
+7. Enriquece la historia ./backend/docs/user_histories/US-get-position-candidates.md, la aplicación no cuenta con sistema de autenticación, por lo que esto no se debe tener en cuenta en la historia de usuario.
 
 8. Revisa que los siguientes criterios se cumplen en la historia @backend/docs/user_histories/US-get-position-candidates.md que se incluya, Los cambios de rutas, controladores, etc. en la carpeta ./backend
 
@@ -74,3 +78,24 @@ Además en el archivo de la historia de usuario pon checks para tener claro que 
 12. en la historia quedan sin completar la sección ## Criterios de Aceptación (TDD / BDD)
 
 13. no se ven aplicadas las ### Reglas de Dominio: @backend/docs/user_histories/US-get-position-candidates.md
+
+# Prompts segundo endpoint
+
+14. eres un Senior experto en Express + Prisma en backend. Crea y enriquece la siguiente historia de usuario: crear un nuevo endpoint en una interfaz tipo kanban.
+    PUT /candidates/:id/stage
+    Este endpoint actualizará la etapa del candidato movido. Permite modificar la fase actual del proceso de entrevista en la que se encuentra un candidato específico.
+
+- Historia con criterios de aceptación que incluyan TDD y DDD
+
+Enriquece la historia de usuario y guardala en un archivo .md en ./backend/docs/user_histories
+
+- crea el diagrama de secuencia del feature en formato mermaid
+
+- haz un diagrama UML de casos de uso usando flowchart de Mermaid, NO sequenceDiagram.
+- En el archivo de la historia de usuario pon checks para tener claro que se ha ejecutado y qué falta
+- Tener en cuenta que la aplicación no cuenta con sistema de autenticación, por lo que esto no se debe tener en cuenta en la historia de usuario.
+- En la historia que se incluya, Los cambios de rutas, controladores, etc. en la carpeta ./backend
+- la base de datos está descrita aquí: @docs/database/database_model.md
+- explora @backend/src para entener la estructura y creación de los Endpoints para tenerlo en cuenta
+
+15. enriquece la siguiente historia de usuario @backend/docs/user_histories/US-put-candidate-stage.md
