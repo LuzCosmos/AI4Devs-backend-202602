@@ -64,3 +64,5 @@ Además en el archivo de la historia de usuario pon checks para tener claro que 
 7. Enriquese la historia ./backend/docs/user_histories/US-get-position-candidates.md, la aplicación no cuenta con sistema de autenticación, por lo que esto no se debe tener en cuenta en la historia de usuario.
 
 8. Revisa que los siguientes criterios se cumplen en la historia @backend/docs/user_histories/US-get-position-candidates.md que se incluya, Los cambios de rutas, controladores, etc. en la carpeta ./backend
+
+9. ejecuta la historia @backend/docs/user_histories/US-get-position-candidates.md para el endpoint en backend

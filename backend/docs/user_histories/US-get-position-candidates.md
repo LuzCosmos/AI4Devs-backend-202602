@@ -8,11 +8,11 @@
 
 > **Nota de Arquitectura:** Todos los cambios (Rutas, Controladores, Casos de Uso, Repositorios) deben realizarse obligatoriamente dentro de la carpeta `./backend/src/` respetando la arquitectura de capas actual del proyecto.
 
-- [ ] Definir interfaz de Request y Response en `./backend/src/domain/` (DTOs / Tipado).
-- [ ] Implementar la consulta a Base de Datos usando Prisma en la capa de infraestructura: `./backend/src/infrastructure/` (Repositorio).
-- [ ] Implementar la lógica de cálculo del `averageScore` e inyección del `fullName` en la capa de aplicación: `./backend/src/application/` (Servicio/Casos de Uso).
-- [ ] Implementar el Controlador en la capa de presentación: `./backend/src/presentation/` (Gestión de req/res y validaciones).
-- [ ] Añadir la configuración de la ruta `GET /positions/:id/candidates` en `./backend/src/routes/`.
+- [x] Definir interfaz de Request y Response en `./backend/src/domain/` (DTOs / Tipado).
+- [x] Implementar la consulta a Base de Datos usando Prisma en la capa de infraestructura: `./backend/src/infrastructure/` (Repositorio).
+- [x] Implementar la lógica de cálculo del `averageScore` e inyección del `fullName` en la capa de aplicación: `./backend/src/application/` (Servicio/Casos de Uso).
+- [x] Implementar el Controlador en la capa de presentación: `./backend/src/presentation/` (Gestión de req/res y validaciones).
+- [x] Añadir la configuración de la ruta `GET /positions/:id/candidates` en `./backend/src/routes/`.
 - [ ] Escribir pruebas en `./backend/src/tests/` (Unitarias e Integración).
 - [ ] Documentar endpoint en Swagger.
 
