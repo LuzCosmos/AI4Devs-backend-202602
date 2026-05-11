@@ -13,8 +13,14 @@
 - [x] Implementar la lógica de cálculo del `averageScore` e inyección del `fullName` en la capa de aplicación: `./backend/src/application/` (Servicio/Casos de Uso).
 - [x] Implementar el Controlador en la capa de presentación: `./backend/src/presentation/` (Gestión de req/res y validaciones).
 - [x] Añadir la configuración de la ruta `GET /positions/:id/candidates` en `./backend/src/routes/`.
-- [ ] Escribir pruebas en `./backend/src/tests/` (Unitarias e Integración).
-- [ ] Documentar endpoint en Swagger.
+- [x] Escribir pruebas en `./backend/src/tests/` (Unitarias e Integración).
+  - Unit: `./backend/src/tests/positionService.test.ts`
+  - Endpoint: `./backend/src/tests/positionCandidates.endpoint.test.ts`
+  - Ejecutar: `cd backend && npm test`
+- [x] Documentar endpoint en Swagger.
+  - OpenAPI en `./backend/src/routes/positionRoutes.ts` (bloque `@openapi`)
+  - Swagger spec en `./backend/src/swagger.ts`
+  - UI montada en `GET /docs` (ver `./backend/src/index.ts`)
 
 ---
 
@@ -85,9 +91,15 @@ Desde la perspectiva del **Domain-Driven Design (DDD)**, la lógica de negocio s
 > **Nota:** La aplicación actual **NO cuenta con un sistema de autenticación ni autorización**. Por lo tanto, el endpoint será público. No se requiere validar tokens (ej. JWT) ni comprobar si el usuario tiene permisos o roles de "Reclutador" para visualizar esta posición.
 
 ### Reglas de Dominio:
-- [ ] **Identidad del Candidato:** Concatenar `Candidate.firstName` y `Candidate.lastName` para exponer el `fullName`.
-- [ ] **Paso Actual:** Extraer los datos relacionales de `InterviewStep` asignado a la aplicación (al menos su `name` y `orderIndex`).
-- [ ] **Cálculo de la Puntuación Media (`averageScore`):**
+- [x] **Identidad del Candidato:** Concatenar `Candidate.firstName` y `Candidate.lastName` para exponer el `fullName`.
+  - **Implementado en**: `./backend/src/application/services/positionService.ts` (mapeo `fullName`)
+  - **Cubierto por tests**: `./backend/src/tests/positionService.test.ts` y `./backend/src/tests/positionCandidates.endpoint.test.ts`
+- [x] **Paso Actual:** Extraer los datos relacionales de `InterviewStep` asignado a la aplicación (al menos su `name` y `orderIndex`).
+  - **Implementado en**: `./backend/src/application/services/positionService.ts` (mapeo `currentInterviewStep`)
+  - **Cubierto por tests**: `./backend/src/tests/positionService.test.ts`
+- [x] **Cálculo de la Puntuación Media (`averageScore`):**
+  - **Implementado en**: `./backend/src/application/services/positionService.ts`
+  - **Cubierto por tests**: `./backend/src/tests/positionService.test.ts` y `./backend/src/tests/positionCandidates.endpoint.test.ts`
    - Obtener todas las `Interviews` asociadas a esta `Application`.
    - Considerar sólo aquellas entrevistas que tengan un campo numérico válido `score`.
    - Retornar el promedio matemático.
@@ -118,31 +130,36 @@ El endpoint `GET /positions/:id/candidates` retornará un arreglo:
 
 ## ✅ Criterios de Aceptación (TDD / BDD)
 
-- [ ] **Escenario 1: Solicitud exitosa de candidatos en proceso (Happy Path)**
+- [x] **Escenario 1: Solicitud exitosa de candidatos en proceso (Happy Path)**
   - **Dado** que existe la posición con ID `1` y tiene múltiples aplicaciones (candidatos) en proceso.
   - **Cuando** el cliente realiza una petición `GET` a `/positions/1/candidates`
   - **Entonces** la API debe retornar un código de estado `200 OK`
   - **Y** el cuerpo de la respuesta debe ser un arreglo que cumpla estrictamente con el contrato.
+  - **Cubierto por tests**: `./backend/src/tests/positionCandidates.endpoint.test.ts` (caso: `200 con promedio y fullName según contrato`)
 
-- [ ] **Escenario 2: La posición solicitada no existe en el dominio**
+- [x] **Escenario 2: La posición solicitada no existe en el dominio**
   - **Dado** que no existe ninguna posición con el ID `999` en la base de datos.
   - **Cuando** se realiza una petición `GET` a `/positions/999/candidates`
   - **Entonces** la API debe retornar un código de estado `404 Not Found`
   - **Y** el cuerpo debe contener un mensaje estandarizado de error de dominio (ej. `"message": "Position not found"`).
+  - **Cubierto por tests**: `./backend/src/tests/positionCandidates.endpoint.test.ts` (caso: `404 si la posición no existe`)
 
-- [ ] **Escenario 3: Posición sin candidatos postulados**
+- [x] **Escenario 3: Posición sin candidatos postulados**
   - **Dado** que la posición con ID `2` existe de manera válida pero no tiene postulaciones.
   - **Cuando** se realiza una petición `GET` a `/positions/2/candidates`
   - **Entonces** la API debe retornar un código de estado `200 OK`
   - **Y** el cuerpo de la respuesta debe ser un arreglo vacío `[]`.
+  - **Cubierto por tests**: `./backend/src/tests/positionCandidates.endpoint.test.ts` (caso: `200 y [] si la posición existe pero no hay postulaciones`)
 
-- [ ] **Escenario 4: Manejo correcto del cálculo de promedio sin datos de entrevistas**
+- [x] **Escenario 4: Manejo correcto del cálculo de promedio sin datos de entrevistas**
   - **Dado** que el candidato ha aplicado pero no tiene entrevistas asignadas/evaluadas.
   - **Cuando** se realiza una petición `GET` a `/positions/1/candidates`
   - **Entonces** el sistema debe devolver los datos, pero la propiedad `averageScore` debe ser explícitamente `null`.
+  - **Cubierto por tests**: `./backend/src/tests/positionService.test.ts` (caso: `devuelve averageScore null si no hay scores válidos`)
 
-- [ ] **Escenario 5: Validación robusta del parámetro de entrada**
+- [x] **Escenario 5: Validación robusta del parámetro de entrada**
   - **Dado** que un cliente intenta inyectar texto o tipos incorrectos en la URL (`/positions/invalid/candidates`).
   - **Cuando** se realiza la petición.
   - **Entonces** la capa de presentación (middleware de validación) debe detener la petición antes de interactuar con Prisma.
   - **Y** retornar un `400 Bad Request`.
+  - **Cubierto por tests**: `./backend/src/tests/positionCandidates.endpoint.test.ts` (caso: `400 si el id no es entero`)

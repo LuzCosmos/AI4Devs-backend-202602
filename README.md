@@ -81,6 +81,21 @@ npm start
 
 The backend server will be running at http://localhost:3010 and the frontend will be available at http://localhost:3000.
 
+## Tests (Backend)
+
+Run the backend test suite with Jest:
+
+```sh
+cd backend
+npm test
+```
+
+## Swagger (API Docs)
+
+Start the backend and open Swagger UI at:
+
+- `http://localhost:3010/docs`
+
 ## Docker and PostgreSQL
 
 This project uses Docker to run a PostgreSQL database. Here's how to set it up:
@@ -240,6 +255,21 @@ npm start
 ```
 
 El servidor backend estará corriendo en http://localhost:3010 y el frontend estará disponible en http://localhost:3000.
+
+## Tests (Backend)
+
+Para correr los tests del backend con Jest:
+
+```sh
+cd backend
+npm test
+```
+
+## Swagger (Documentación de la API)
+
+Levanta el backend y abre Swagger UI en:
+
+- `http://localhost:3010/docs`
 
 ## Docker y PostgreSQL
 

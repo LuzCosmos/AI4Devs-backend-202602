@@ -66,3 +66,11 @@ Además en el archivo de la historia de usuario pon checks para tener claro que 
 8. Revisa que los siguientes criterios se cumplen en la historia @backend/docs/user_histories/US-get-position-candidates.md que se incluya, Los cambios de rutas, controladores, etc. en la carpeta ./backend
 
 9. ejecuta la historia @backend/docs/user_histories/US-get-position-candidates.md para el endpoint en backend
+
+10. Continue avance en el archivo @backend/docs/user_histories/US-get-position-candidates.md
+
+11. actualiza la historia de usuario @backend/docs/user_histories/US-get-position-candidates.md con los cambios realizados. Agrega en el @README.md una sección de cómo correr los tests y cómo se accede al swagger
+
+12. en la historia quedan sin completar la sección ## Criterios de Aceptación (TDD / BDD)
+
+13. no se ven aplicadas las ### Reglas de Dominio: @backend/docs/user_histories/US-get-position-candidates.md

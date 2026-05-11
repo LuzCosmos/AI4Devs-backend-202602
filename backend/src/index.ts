@@ -6,6 +6,8 @@ import candidateRoutes from './routes/candidateRoutes';
 import positionRoutes from './routes/positionRoutes';
 import { uploadFile } from './application/services/fileUploadService';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger';
 
 // Extender la interfaz Request para incluir prisma
 declare global {
@@ -43,6 +45,10 @@ app.use('/candidates', candidateRoutes);
 // Import and use positionRoutes
 app.use('/positions', positionRoutes);
 
+// Swagger docs
+// Nota: casteo a `any` para evitar conflictos de tipos si existen múltiples @types/express instalados.
+app.use('/docs', swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
+
 // Route for file uploads
 app.post('/upload', uploadFile);
 
@@ -63,6 +69,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something broke!');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+// Evita abrir el puerto cuando Jest importa `app`
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+}
