@@ -19,22 +19,25 @@
 > **Nota de Dominio (importante):** En el modelo de datos, la “etapa” del candidato en un tablero Kanban corresponde al estado de su **postulación**: `Application.currentInterviewStep -> InterviewStep`.  
 > En el endpoint `GET /positions/:id/candidates` ya se expone `applicationId`, por lo que en esta historia **`:id` se interpreta como `applicationId`** (la tarjeta movida en el Kanban).
 
-- [ ] Definir contrato de request/response (DTO) en `./backend/src/domain/dtos/`.
-  - [ ] `ChangeCandidateStageRequestDTO` (input) y `ChangeCandidateStageResponseDTO` (output).
-  - [ ] Estándar de error payload (si el repo ya usa uno, reutilizarlo).
-- [ ] Implementar repositorio en `./backend/src/infrastructure/` para:
-  - [ ] Buscar `Application` por id (incluyendo `position.interviewFlow` y `currentInterviewStep`).
-  - [ ] Validar existencia de `InterviewStep` destino.
-  - [ ] Persistir el cambio de `currentInterviewStep`.
-- [ ] Implementar caso de uso/servicio en `./backend/src/application/services/` con reglas de dominio del cambio de etapa.
-  - [ ] Mapeo consistente de errores de dominio a errores HTTP (sin filtrar errores internos).
-- [ ] Implementar controlador en `./backend/src/presentation/controllers/` (validación de `:id` y body, mapeo de errores).
-- [ ] Añadir ruta `PUT /candidates/:id/stage` en `./backend/src/routes/` y documentarla con `@openapi`.
-- [ ] Añadir/actualizar Swagger spec en `./backend/src/swagger.ts` si es necesario.
-- [ ] Escribir pruebas siguiendo **TDD**:
-  - [ ] Unit tests del caso de uso en `./backend/src/tests/` (sin Express).
-  - [ ] Endpoint/integration tests del `PUT /candidates/:id/stage` en `./backend/src/tests/` (supertest o similar).
-  - [ ] Ejecutar: `cd backend && npm test`.
+- [x] Definir contrato de request/response (DTO) en `./backend/src/domain/dtos/`.
+  - [x] `ChangeCandidateStageRequestDTO` (input) y `ChangeCandidateStageResponseDTO` (output) en `./backend/src/domain/dtos/ChangeCandidateStageDTO.ts`.
+  - [x] Payloads de error alineados a controladores existentes (`positionController.ts`).
+- [x] Implementar repositorio en `./backend/src/infrastructure/` para:
+  - [x] Buscar `Application` por id (incluyendo `position.interviewFlowId` y `interviewStep`) en `./backend/src/infrastructure/ApplicationRepository.ts`.
+  - [x] Validar existencia de `InterviewStep` destino (lookup).
+  - [x] Persistir el cambio de `currentInterviewStep` (update).
+- [x] Implementar caso de uso/servicio en `./backend/src/application/services/` con reglas de dominio del cambio de etapa.
+  - [x] `changeCandidateStage` en `./backend/src/application/services/candidateStageService.ts` (existencia, pertenencia a flow, idempotencia).
+- [x] Implementar controlador en `./backend/src/presentation/controllers/` (validación de `:id` y body, mapeo de errores).
+  - [x] `changeCandidateStageController` en `./backend/src/presentation/controllers/candidateController.ts`.
+- [x] Añadir ruta `PUT /candidates/:id/stage` en `./backend/src/routes/` y documentarla con `@openapi`.
+  - [x] Ruta y OpenAPI en `./backend/src/routes/candidateRoutes.ts`.
+- [x] Añadir/actualizar Swagger spec en `./backend/src/swagger.ts` si es necesario.
+  - [x] Swagger auto-escanea rutas/controladores (`./backend/src/swagger.ts`), no requiere cambios adicionales.
+- [x] Escribir pruebas siguiendo **TDD**:
+  - [x] Unit tests del caso de uso en `./backend/src/tests/candidateStageService.test.ts`.
+  - [x] Endpoint/integration-ish tests en `./backend/src/tests/candidateStage.endpoint.test.ts` (supertest + mocks).
+  - [x] Ejecutado: `cd backend && npm test` (verde).
 
 ---
 
@@ -260,7 +263,7 @@ curl -X PUT http://localhost:3000/candidates/12/stage \
 > **Enfoque TDD requerido:** primero tests (unit + endpoint), luego implementación mínima, luego refactor.  
 > **Enfoque DDD requerido:** reglas de dominio aplicadas en el caso de uso y protegidas por tests (no sólo en controlador).
 
-- [ ] **Escenario 1: Happy path — mover candidato a una etapa válida**
+- [x] **Escenario 1: Happy path — mover candidato a una etapa válida**
 
   - **Dado** que existe una `Application` con `id = 12` asociada a una `Position` con un `InterviewFlow` que contiene el `InterviewStep` `id = 3`.
   - **Cuando** se ejecuta `PUT /candidates/12/stage` con body `{ "interviewStepId": 3 }`
@@ -271,33 +274,33 @@ curl -X PUT http://localhost:3000/candidates/12/stage \
     - Unit: verifica regla de dominio + mapeo DTO del caso de uso.
     - Endpoint: verifica status 200 y persistencia (lectura posterior o query).
 
-- [ ] **Escenario 2: Validación del parámetro `:id`**
+- [x] **Escenario 2: Validación del parámetro `:id`**
 
   - **Dado** un `:id` no entero (`/candidates/abc/stage`)
   - **Cuando** se ejecuta el request
   - **Entonces** responde `400 Bad Request`
   - **Y** no intenta interactuar con Prisma.
 
-- [ ] **Escenario 3: Validación del body**
+- [x] **Escenario 3: Validación del body**
 
   - **Dado** un body sin `interviewStepId` o con tipo incorrecto
   - **Cuando** se ejecuta `PUT /candidates/12/stage`
   - **Entonces** responde `400 Bad Request`.
 
-- [ ] **Escenario 4: Application no existe**
+- [x] **Escenario 4: Application no existe**
 
   - **Dado** que no existe `Application` con `id = 9999`
   - **Cuando** se ejecuta `PUT /candidates/9999/stage` con `{ "interviewStepId": 3 }`
   - **Entonces** responde `404 Not Found` con mensaje de dominio (ej. `"message": "Application not found"`).
 
-- [ ] **Escenario 5: InterviewStep no existe**
+- [x] **Escenario 5: InterviewStep no existe**
 
   - **Dado** que la `Application` existe
   - **Y** no existe `InterviewStep` con `id = 999`
   - **Cuando** se ejecuta `PUT /candidates/12/stage` con `{ "interviewStepId": 999 }`
   - **Entonces** responde `404 Not Found` con mensaje de dominio (ej. `"message": "InterviewStep not found"`).
 
-- [ ] **Escenario 6: Regla DDD — InterviewStep no pertenece al flujo de la posición**
+- [x] **Escenario 6: Regla DDD — InterviewStep no pertenece al flujo de la posición**
 
   - **Dado** que existe `Application id = 12`
   - **Y** existe `InterviewStep id = 7`
@@ -306,7 +309,7 @@ curl -X PUT http://localhost:3000/candidates/12/stage \
   - **Entonces** responde `422 Unprocessable Entity`
   - **Y** no persiste cambios en `currentInterviewStep`.
 
-- [ ] **Escenario 7: Idempotencia**
+- [x] **Escenario 7: Idempotencia**
   - **Dado** que la `Application 12` ya tiene `currentInterviewStep = 3`
   - **Cuando** se ejecuta `PUT /candidates/12/stage` con `{ "interviewStepId": 3 }`
   - **Entonces** responde `200 OK`

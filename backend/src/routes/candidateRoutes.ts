@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addCandidate, getCandidateById } from '../presentation/controllers/candidateController';
+import { addCandidate, changeCandidateStageController, getCandidateById } from '../presentation/controllers/candidateController';
 
 const router = Router();
 
@@ -18,5 +18,42 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:id', getCandidateById);
+
+/**
+ * @openapi
+ * /candidates/{id}/stage:
+ *   put:
+ *     summary: Actualizar etapa de un candidato (Kanban)
+ *     description: Actualiza el InterviewStep actual de una Application (tarjeta del Kanban).
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: applicationId (id de la postulación/tarjeta)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [interviewStepId]
+ *             properties:
+ *               interviewStepId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Etapa actualizada
+ *       400:
+ *         description: Parámetros inválidos
+ *       404:
+ *         description: Application o InterviewStep no encontrado
+ *       422:
+ *         description: InterviewStep no pertenece al flujo de la Position
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.put('/:id/stage', changeCandidateStageController);
 
 export default router;

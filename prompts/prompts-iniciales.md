@@ -99,3 +99,5 @@ Enriquece la historia de usuario y guardala en un archivo .md en ./backend/docs/
 - explora @backend/src para entener la estructura y creación de los Endpoints para tenerlo en cuenta
 
 15. enriquece la siguiente historia de usuario @backend/docs/user_histories/US-put-candidate-stage.md
+
+16. ejecuta la historia @backend/docs/user_histories/US-put-candidate-stage.md del endpoint backend, a medida que implementes los puntos allí descritos, actualiza el archivo de la historia
