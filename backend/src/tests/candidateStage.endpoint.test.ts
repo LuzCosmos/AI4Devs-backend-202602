@@ -101,5 +101,48 @@ describe('PUT /candidates/:id/stage (integration-ish)', () => {
       currentInterviewStep: { id: 3, name: 'Tech', orderIndex: 2 },
     });
   });
+
+  it('es robusto ante dos movimientos concurrentes (last write wins)', async () => {
+    mockedRepo.findApplicationById.mockResolvedValue({
+      id: 12,
+      currentInterviewStep: 2,
+      interviewStep: { id: 2, name: 'Phone', orderIndex: 1 },
+      position: { interviewFlowId: 10 },
+    } as any);
+
+    mockedRepo.findInterviewStepById.mockImplementation(async (id: number) => {
+      if (id === 3) {
+        return { id: 3, name: 'Tech', orderIndex: 2, interviewFlowId: 10 } as any;
+      }
+      if (id === 4) {
+        return { id: 4, name: 'Onsite', orderIndex: 3, interviewFlowId: 10 } as any;
+      }
+      return null as any;
+    });
+
+    mockedRepo.updateApplicationStage.mockImplementation(async (_appId: number, stepId: number) => {
+      if (stepId === 3) {
+        return { id: 12, interviewStep: { id: 3, name: 'Tech', orderIndex: 2 } } as any;
+      }
+      if (stepId === 4) {
+        return { id: 12, interviewStep: { id: 4, name: 'Onsite', orderIndex: 3 } } as any;
+      }
+      throw new Error('unexpected stepId');
+    });
+
+    const req1 = request(app).put('/candidates/12/stage').send({ interviewStepId: 3 });
+    const req2 = request(app).put('/candidates/12/stage').send({ interviewStepId: 4 });
+
+    const [res1, res2] = await Promise.all([req1, req2]);
+
+    expect([res1.status, res2.status].sort()).toEqual([200, 200]);
+    expect(mockedRepo.updateApplicationStage).toHaveBeenCalledTimes(2);
+
+    // El "último" estado en este test se modela como el segundo movimiento (step 4)
+    expect(res2.body).toEqual({
+      applicationId: 12,
+      currentInterviewStep: { id: 4, name: 'Onsite', orderIndex: 3 },
+    });
+  });
 });
 

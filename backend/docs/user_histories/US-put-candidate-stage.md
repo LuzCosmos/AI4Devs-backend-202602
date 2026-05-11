@@ -315,12 +315,13 @@ curl -X PUT http://localhost:3000/candidates/12/stage \
   - **Entonces** responde `200 OK`
   - **Y** la respuesta representa el mismo estado (sin duplicar efectos secundarios).
 
-- [ ] **Escenario 8: Robustez ante múltiples movimientos rápidos (consistencia)**
+- [x] **Escenario 8: Robustez ante múltiples movimientos rápidos (consistencia)**
   - **Dado** que el frontend puede disparar dos movimientos consecutivos en milisegundos (drag-and-drop rápido)
   - **Cuando** llegan dos `PUT /candidates/12/stage` concurrentes
   - **Entonces** la base de datos debe quedar en el último estado persistido
   - **Y** el sistema no debe quedar en un estado inválido (por ejemplo, una etapa que no pertenece al flujo).
-  - Nota: si se requiere control de concurrencia fuerte, documentar estrategia (transacción o validación en update).
+  - **Cubierto por tests**: `./backend/src/tests/candidateStage.endpoint.test.ts` (caso concurrente con `Promise.all`).
+  - Nota: si se requiere control de concurrencia fuerte (evitar lost-update), documentar e implementar estrategia (optimistic locking/versionado o transacción con precondición).
 
 ---
 
